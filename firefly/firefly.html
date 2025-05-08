@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lucciola con Menù</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: sans-serif;
+    }
+
+    .container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .counters {
+      margin: 10px;
+      font-size: 18px;
+    }
+
+    .counter {
+      display: inline-block;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    .counter.red { color: red; }
+    .counter.green { color: limegreen; }
+
+    .box {
+      position: relative;
+      width: 80vw;
+      height: 80vh;
+      border: 2px solid white;
+      overflow: hidden;
+      background-color: #000;
+      transition: background-color 0.5s; /* Aggiunto per l'effetto rosso */
+    }
+
+    .lucciola {
+      position: absolute;
+      width: 50px;
+      height: 100px;
+    }
+
+    .testa, .corpo, .addome {
+      position: absolute;
+      background-color: #444;
+      border-radius: 50%;
+    }
+
+    .testa {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      z-index: 2;
+    }
+
+    .corpo {
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 50px;
+      z-index: 1;
+    }
+
+    .addome {
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 30px;
+      background-color: yellow;
+      opacity: 0;
+      transition: opacity 0.5s;
+      z-index: 0;
+    }
+
+    .antenna {
+      position: absolute;
+      width: 2px;
+      height: 15px;
+      background: #666;
+      top: -10px;
+      transform-origin: bottom center;
+      animation: muoviAntenna 2s infinite ease-in-out alternate;
+    }
+
+    .antenna.left { left: 40%; animation-delay: 0s; }
+    .antenna.right { left: 60%; animation-delay: 1s; }
+
+    @keyframes muoviAntenna {
+      0% { transform: rotate(-10deg); }
+      100% { transform: rotate(10deg); }
+    }
+
+    .ala {
+      position: absolute;
+      width: 40px;
+      height: 20px;
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      top: 25px;
+      transform-origin: center;
+      animation: vibraAli 0.2s infinite alternate;
+    }
+
+    .ala.left { left: -20px; }
+    .ala.right { right: -20px; }
+
+    @keyframes vibraAli {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(10deg); }
+    }
+
+    .zampa {
+      position: absolute;
+      width: 2px;
+      height: 15px;
+      background: #333;
+      top: 60px;
+      animation: muoviZampa 1s infinite ease-in-out alternate;
+    }
+
+    .zampa.left { left: 30%; }
+    .zampa.right { left: 70%; }
+
+    @keyframes muoviZampa {
+      0% { transform: rotate(10deg); }
+      100% { transform: rotate(-10deg); }
+    }
+
+    .marker {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: red;
+      border-radius: 50%;
+      display: none;
+    }
+
+    /* MENU INIZIALE */
+    .menu {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .menu .lucciola {
+      position: relative;
+      transform: scale(1.5);
+      animation: fluttuazione 2s infinite ease-in-out;
+    }
+
+    @keyframes fluttuazione {
+      0%, 100% { transform: translateY(0) scale(1.5); }
+      50% { transform: translateY(-10px) scale(1.5); }
+    }
+
+    .start-button {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 20px;
+      background: limegreen;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .start-button:hover {
+      background: #00cc00;
+    }
+
+    /* SCHERMATA DI SCONFITTA */
+    .sconfitta {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      color: white;
+      font-size: 24px;
+    }
+
+    .sconfitta .lucciola {
+      position: relative;
+      transform: scale(1.5);
+    }
+
+    .sconfitta .cross {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      background: red;
+      clip-path: polygon(50% 0%, 60% 10%, 50% 20%, 40% 10%);
+    }
+
+    .restart-button {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 20px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .restart-button:hover {
+      background: darkred;
+    }
+  </style>
+</head>
+<body>
+  <!-- MENU INIZIALE -->
+  <div class="menu" id="menu">
+    <div class="lucciola">
+      <div class="testa"></div>
+      <div class="antenna left"></div>
+      <div class="antenna right"></div>
+      <div class="ala left"></div>
+      <div class="ala right"></div>
+      <div class="corpo"></div>
+      <div class="zampa left"></div>
+      <div class="zampa right"></div>
+      <div class="addome" style="opacity:1;"></div>
+    </div>
+    <button class="start-button" onclick="startGame()">START</button>
+  </div>
+
+  <!-- GIOCO -->
+  <div class="container" id="gameContainer">
+    <div class="counters">
+      <span class="counter red">Marker creati: <span id="createdCount">0</span></span>
+      <span class="counter green">Marker raggiunti: <span id="reachedCount">0</span></span>
+      <span class="counter">Tempo: <span id="timeCount">60</span>s</span>
+    </div>
+    <div class="box" id="box">
+      <div class="lucciola" id="lucciola">
+        <div class="testa"></div>
+        <div class="antenna left"></div>
+        <div class="antenna right"></div>
+        <div class="ala left"></div>
+        <div class="ala right"></div>
+        <div class="corpo"></div>
+        <div class="zampa left"></div>
+        <div class="zampa right"></div>
+        <div class="addome" id="addome"></div>
+      </div>
+      <div class="marker" id="marker"></div>
+    </div>
+  </div>
+
+  <!-- SCHERMATA DI SCONFITTA -->
+  <div class="sconfitta" id="sconfitta">
+    <div class="lucciola">
+      <div class="testa"></div>
+      <div class="cross"></div>
+      <div class="antenna left"></div>
+      <div class="antenna right"></div>
+      <div class="ala left"></div>
+      <div class="ala right"></div>
+      <div class="corpo"></div>
+      <div class="zampa left"></div>
+      <div class="zampa right"></div>
+      <div class="addome" style="opacity:1;"></div>
+    </div>
+    <div>Punteggio finale: <span id="finalScore">0</span></div>
+    <button class="restart-button" onclick="restartGame()">RESTART</button>
+  </div>
+
+  <script>
+    // Mostra il gioco e nasconde il menu
+    function startGame() {
+      document.getElementById('menu').style.display = 'none';
+      document.getElementById('gameContainer').style.display = 'flex';
+      startTimer();
+    }
+
+    // Elementi DOM
+    const box = document.getElementById('box');
+    const lucciola = document.getElementById('lucciola');
+    const marker = document.getElementById('marker');
+    const addome = document.getElementById('addome');
+    const createdCountEl = document.getElementById('createdCount');
+    const reachedCountEl = document.getElementById('reachedCount');
+    const timeCountEl = document.getElementById('timeCount');
+    const sconfittaEl = document.getElementById('sconfitta');
+    const finalScoreEl = document.getElementById('finalScore');
+
+    // Stato iniziale
+    let posX = 100, posY = 100;
+    let targetX = posX, targetY = posY;
+    let moving = false;
+    let createdCount = 0;
+    let reachedCount = 0;
+    let timeLeft = 10;
+    let score = 0;
+    let timerInterval;
+
+    // Lampeggio addome
+    function illuminaAddome() {
+      addome.style.opacity = addome.style.opacity === '1' ? '0' : '1';
+    }
+
+    setInterval(illuminaAddome, 1000);
+
+    // Click nel box: imposta nuovo target
+    box.addEventListener('click', (e) => {
+      const rect = box.getBoundingClientRect();
+      targetX = e.clientX - rect.left;
+      targetY = e.clientY - rect.top;
+
+      marker.style.left = `${targetX - 5}px`;
+      marker.style.top = `${targetY - 5}px`;
+      marker.style.display = 'block';
+
+      createdCount++;
+      createdCountEl.textContent = createdCount;
+
+      moving = true;
+    });
+
+    // Movimento fluido verso il marker
+    function aggiornaPosizione() {
+      if (moving) {
+        const dx = targetX - posX;
+        const dy = targetY - posY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 2) {
+          // Raggiunto il marker
+          moving = false;
+          marker.style.display = 'none';
+          reachedCount++;
+          reachedCountEl.textContent = reachedCount;
+          score += dist;
+          timeLeft += 2; // Aggiungi 2 secondi
+          timeCountEl.textContent = timeLeft;
+        } else {
+          // Movimento graduale verso il target
+          const step = 2;
+          posX += (dx / dist) * step;
+          posY += (dy / dist) * step;
+        }
+
+        // Posiziona la lucciola centrata
+        lucciola.style.left = `${posX - 25}px`;
+        lucciola.style.top = `${posY - 50}px`;
+      }
+
+      requestAnimationFrame(aggiornaPosizione);
+    }
+
+    // Avvia il ciclo di animazione
+    aggiornaPosizione();
+
+    // Timer di gioco
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timeCountEl.textContent = timeLeft;
+
+        // Effetto rosso sangue
+        if (timeLeft <= 5) {
+          const redIntensity = Math.min(255, (5 - timeLeft) * 51);
+          box.style.backgroundColor = `rgb(${redIntensity}, 0, 0)`;
+        } else {
+          box.style.backgroundColor = '#000';
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    // Fine del gioco
+    function endGame() {
+      document.getElementById('gameContainer').style.display = 'none';
+      sconfittaEl.style.display = 'flex';
+      finalScoreEl.textContent = score.toFixed(2);
+    }
+
+    // Riavvia il gioco
+    function restartGame() {
+      sconfittaEl.style.display = 'none';
+      document.getElementById('menu').style.display = 'flex';
+      resetGame();
+    }
+
+    // Reset del gioco
+    function resetGame() {
+      posX = 100;
+      posY = 100;
+      targetX = posX;
+      targetY = posY;
+      moving = false;
+      createdCount = 0;
+      reachedCount = 0;
+      timeLeft = 10;
+      score = 0;
+      createdCountEl.textContent = createdCount;
+      reachedCountEl.textContent = reachedCount;
+      timeCountEl.textContent = timeLeft;
+      box.style.backgroundColor = '#000';
+    }
+  </script>
+</body>
+</html>
