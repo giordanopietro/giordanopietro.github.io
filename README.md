@@ -1,7 +1,7 @@
 # giordanopietro.github.io 
 
-Una mia pagina per esperimenti.
+Un mio sito web
 
-Aggiunto gioco "Firefly" (Completamente generato dall'AI Copilot):
+## Aggiunto gioco "Firefly" (Completamente generato dall'AI Copilot):
 
     https://giordanopietro.github.io/firefly/firefly.html
